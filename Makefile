@@ -5,7 +5,7 @@ DATABASE_URL ?= postgres://rillock:rillock@127.0.0.1:55432/rillock?sslmode=disab
 KEYS_FILE ?= .rillock/keys.yaml
 LINT_VERSION := v2.14.0
 
-.PHONY: build install tools test test-db lint fmt run dev-key reload-keys migrate db-up db-down db-reset psql python-test check
+.PHONY: build install tools test test-db lint fmt run dev-key reload-keys migrate db-up db-down db-reset psql check
 
 build:
 	go build -ldflags "$(LDFLAGS)" -o bin/rillock ./cmd/rillock
@@ -67,8 +67,4 @@ db-reset:
 psql:
 	docker compose exec postgres psql -U rillock rillock
 
-# The same Python checks CI runs.
-python-test:
-	cd python && ruff check . && python -m pytest
-
-check: lint test python-test
+check: lint test
