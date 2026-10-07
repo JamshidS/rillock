@@ -1,0 +1,38 @@
+# Go
+/bin/
+
+# Local server state: API keys file from `make dev-key`
+/.rillock/
+*.test
+coverage.out
+
+# Python and packaging
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Credentials and generated local recordings
+.env
+.env.*
+!.env.example
+artifacts/
+runs/
+demo-run/
+report.html
+diff.html
+
+# Local editor and agent metadata
+.idea/
+.vscode/
+.agents/
+.codex/
+.DS_Store
+/docs

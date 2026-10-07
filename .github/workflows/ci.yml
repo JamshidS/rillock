@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: rillock
+          POSTGRES_PASSWORD: rillock
+          POSTGRES_DB: rillock
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rillock"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+    env:
+      # Set here so database tests run in CI instead of skipping.
+      RILLOCK_TEST_DATABASE_URL: postgres://rillock:rillock@localhost:5432/rillock?sslmode=disable
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.14.0
+      - run: make test
+      - run: make build

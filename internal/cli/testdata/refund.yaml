@@ -1,0 +1,34 @@
+kind: Tool
+name: orders_get
+description: Look up an order by ID.
+endpoint: http://orders.test/get
+effect: read_only
+inputSchema:
+  type: object
+  properties:
+    order_id: {type: string}
+  required: [order_id]
+---
+kind: Tool
+name: payments_refund
+description: Refund part or all of an order.
+endpoint: http://payments.test/refund
+effect: keyed
+secrets: [PAYMENTS_API_KEY]
+policy:
+  - when: args.amount > 1000
+    action: deny
+  - when: args.amount > 100
+    action: require_approval
+---
+kind: Agent
+name: refund-agent
+model:
+  provider: fake
+  name: scripted
+instructions: You help customers with refunds. Look up the order first.
+tools: [orders_get, payments_refund]
+limits:
+  maxSteps: 20
+  maxCostUSD: 0.50
+  maxDuration: 5m
