@@ -1,0 +1,32 @@
+# Tools served by ./tools-server, and an agent that uses them. The agent runs
+# the "scripted" fake model, which follows a script given as the run input,
+# so no API key is needed. See README.md.
+kind: Tool
+name: orders_get
+description: Look up an order by its ID.
+endpoint: http://127.0.0.1:9000/orders/get
+effect: read_only
+inputSchema:
+  type: object
+  properties:
+    order_id: {type: string}
+  required: [order_id]
+---
+kind: Tool
+name: payments_refund
+description: Refund part or all of an order.
+endpoint: http://127.0.0.1:9000/payments/refund
+effect: keyed
+inputSchema:
+  type: object
+  properties:
+    order_id: {type: string}
+    amount: {type: number}
+  required: [order_id, amount]
+---
+kind: Agent
+name: refund-demo
+model: {provider: fake, name: scripted}
+instructions: You help customers with refunds. Look up the order first.
+tools: [orders_get, payments_refund]
+limits: {maxSteps: 10}
