@@ -1,0 +1,21 @@
+# Development database. Not for production use.
+name: rillock
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: rillock
+      POSTGRES_PASSWORD: rillock
+      POSTGRES_DB: rillock
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rillock -d rillock"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  pgdata:

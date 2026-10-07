@@ -1,0 +1,57 @@
+# Lint configuration. Run with `make lint`. CI runs the same checks.
+# Each linter below catches a class of bug; the comment says which.
+version: "2"
+
+linters:
+  default: standard # errcheck, govet, ineffassign, staticcheck, unused
+  enable:
+    - bodyclose       # HTTP response bodies that are never closed
+    - contextcheck    # functions that drop the caller's context
+    - errname         # sentinel errors named ErrXxx, error types named XxxError
+    - errorlint       # comparing errors with == instead of errors.Is/As
+    - gocritic        # a broad set of correctness and style checks
+    - gosec           # security problems (weak crypto, SQL built from strings, ...)
+    - misspell        # spelling mistakes in comments and strings
+    - nilerr          # returning nil when an error was just checked
+    - noctx           # HTTP requests or queries without a context
+    - revive          # Go style: exported names documented, naming conventions
+    - rowserrcheck    # database rows whose Err() is never checked
+    - sqlclosecheck   # database rows or statements that are never closed
+    - unconvert       # unnecessary type conversions
+    - unparam         # function parameters that are always the same value
+    - usestdlibvars   # "GET" instead of http.MethodGet, 200 instead of http.StatusOK
+  settings:
+    errcheck:
+      # Printing to the terminal cannot usefully fail: if stdout is gone, there
+      # is no one left to tell. Close and write errors elsewhere are checked.
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
+    revive:
+      rules:
+        - name: exported
+        - name: package-comments
+        - name: var-naming
+        - name: error-strings
+        - name: error-return
+        - name: receiver-naming
+        - name: indent-error-flow
+        - name: unused-parameter
+  exclusions:
+    rules:
+      # Tests may build SQL from constant strings and ignore some errors on cleanup.
+      - path: _test\.go
+        linters: [gosec, errcheck]
+      # Test helpers take parameters for readability even when every current
+      # test passes the same value.
+      - path: _test\.go
+        linters: [unparam]
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes: [github.com/jamshids/rillock]
