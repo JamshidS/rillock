@@ -1,2 +1,2 @@
 # rillock
-An open-source tool for finding and fixing mistakes in AI workflow
+Substrate runs agents. Rillock decides what they may do and remembers what they did.
